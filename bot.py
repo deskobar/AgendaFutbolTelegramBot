@@ -1,10 +1,10 @@
 import logging
-import os
+
 import dataframe_image as dfi
 from telegram import ForceReply
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+from telegram.ext import Updater, CommandHandler
 
-from envs import TOKEN
+from envs import TOKEN, CHROME_PATH
 from queries import get_matches_today
 from scrap import get_matches_df
 
@@ -34,7 +34,7 @@ def help_command(update, context):
 def hoy(update, context):
     matches = get_matches_df()
     matches_today = get_matches_today(matches)
-    dfi.export(matches_today, 'dataframe.png', chrome_path='/usr/bin/brave')
+    dfi.export(matches_today, 'dataframe.png', chrome_path=CHROME_PATH)
     img = open('dataframe.png', 'rb')
     update.message.bot.send_photo(update.message.chat.id, open('dataframe.png', 'rb'))
     img.close()
