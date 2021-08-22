@@ -1,12 +1,11 @@
 import logging
 
 import dataframe_image as dfi
-from telegram import ForceReply
 from telegram.ext import Updater, CommandHandler
 
 from envs import TOKEN, CHROME_PATH
-from queries import get_matches_today, get_matches_per_date, filter_matches_substring
-from scrap import get_matches_df
+from queries import get_events_today, get_matches_per_date, filter_matches_substring
+from scrap import get_events_df
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
@@ -18,22 +17,43 @@ logger = logging.getLogger(__name__)
 # Define a few command handlers. These usually take the two arguments update and
 # context.
 def start(update, context):
-    """Send a message when the command /start is issued."""
-    user = update.effective_user
-    update.message.reply_markdown_v2(
-        fr'Hi {user.mention_markdown_v2()}\!',
-        reply_markup=ForceReply(selective=True),
-    )
+    """
+    Send a message when the command /start is issued.
+    """
+    txt = """
+    Bienvenido! Los comandos con que me puedes llamar son:
+    /hoy 
+        Entrega los partidos del día (a la hora de Chile)
+    /fecha <fecha>
+        Entrega los partidos para la fecha dada, debe estar en formato YYYY-MM-DD
+    /cuando <palabra>
+        Entrega los eventos que contienen la palabra en el nombre del evento, canal o liga.
+    """
+    update.message.reply_text(txt)
 
 
 def help_command(update, context):
-    """Send a message when the command /help is issued."""
-    update.message.reply_text('Help!')
+    """
+    Send a message when the command /help is issued.
+    """
+    txt = """
+    Bienvenido! Los comandos con que me puedes llamar son:
+    /hoy 
+        Entrega los partidos del día (a la hora de Chile)
+    /fecha <fecha>
+        Entrega los partidos para la fecha dada, debe estar en formato YYYY-MM-DD
+    /cuando <palabra>
+        Entrega los eventos que contienen la palabra en el nombre del evento, canal o liga.
+    """
+    update.message.reply_text(txt)
 
 
 def hoy(update, context):
-    matches = get_matches_df()
-    matches_today = get_matches_today(matches)
+    """
+    Send all the events of the current day
+    """
+    matches = get_events_df()
+    matches_today = get_events_today(matches)
     dfi.export(matches_today, 'dataframe.png', chrome_path=CHROME_PATH)
     img = open('dataframe.png', 'rb')
     update.message.bot.send_photo(update.message.chat.id, open('dataframe.png', 'rb'))
@@ -41,8 +61,13 @@ def hoy(update, context):
 
 
 def fecha(update, context):
+    """
+    Send all the events for a given string date
+    """
+    if len(context.args) != 1:
+        update.message.reply_text(f'Debes enviar /fecha <fecha> en formato YYYY-MM-DD')
     date = context.args[0]
-    matches = get_matches_df()
+    matches = get_events_df()
     matches_these_day = get_matches_per_date(matches, date)
     if not matches_these_day.index.empty:
         dfi.export(matches_these_day, 'dataframe.png', chrome_path=CHROME_PATH)
@@ -50,12 +75,17 @@ def fecha(update, context):
         update.message.bot.send_photo(update.message.chat.id, open('dataframe.png', 'rb'))
         img.close()
     else:
-        update.message.reply_text(f'No hay eventos agendados aún para {date} uwu')
+        update.message.reply_text(f'No hay eventos agendados aún para {date} unu. Prueba con otra fecha')
 
 
 def cuando(update, context):
+    """
+    Given all the events that contains a substring given in their columns
+    """
+    if len(context.args) != 1:
+        update.message.reply_text(f'Debes enviar /cuando <una palabra>')
     substring = context.args[0]
-    matches = get_matches_df()
+    matches = get_events_df()
     matches_filtered = filter_matches_substring(matches, substring)
     if not matches_filtered.index.empty:
         dfi.export(matches_filtered, 'dataframe.png', chrome_path=CHROME_PATH)
@@ -63,7 +93,8 @@ def cuando(update, context):
         update.message.bot.send_photo(update.message.chat.id, open('dataframe.png', 'rb'))
         img.close()
     else:
-        update.message.reply_text(f'No se encontraron eventos que contengan {substring} uwu')
+        update.message.reply_text(f'No se encontraron eventos que contengan {substring} unu. Prueba escribiéndolo de '
+                                  f'otra forma')
 
 
 def main():

@@ -4,13 +4,24 @@ from utils import get_current_datetime
 
 
 def get_matches_per_date(df, date):
+    """
+    Get a Pandas Dataframe where each row has as date the date given
+    :param df: The Pandas Dataframe to filter
+    :param date: The string date or Datetime.Date to filter
+    :return: A Pandas Dataframe filtered by the date
+    """
     if type(date) is str:
         date = datetime.strptime(date, '%Y-%m-%d').date()
     df_filtered = df.loc[df.FECHA == date]
     return df_filtered
 
 
-def get_matches_today(df):
+def get_events_today(df):
+    """
+    Get the matches for the current Day
+    :param df: The Pandas Dataframe to filter the info.
+    :return: A Pandas Dataframe for the current day
+    """
     locale_dt = get_current_datetime()
     current_date = locale_dt.date()
     df_filtered = get_matches_per_date(df, current_date)
@@ -18,6 +29,12 @@ def get_matches_today(df):
 
 
 def filter_matches_substring(df, txt):
-    return df[df['PARTIDO'].str.contains(txt) |
-              df['COMPETENCIA'].str.contains(txt) |
-              df['CANAL'].str.contains(txt)]
+    """
+    Filter the rows of a Pandas Dataframe where some attributes contains the substring given
+    :param df: The Pandas Dataframe to filter
+    :param txt: The substring to search
+    :return: A Pandas Dataframe where each rows contains the substring given.
+    """
+    return df[df['PARTIDO'].str.contains(txt, case=False) |
+              df['COMPETENCIA'].str.contains(txt, case=False) |
+              df['CANAL'].str.contains(txt, case=False)]
