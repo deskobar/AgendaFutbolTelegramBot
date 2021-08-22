@@ -5,7 +5,7 @@ from telegram import ForceReply
 from telegram.ext import Updater, CommandHandler
 
 from envs import TOKEN, CHROME_PATH
-from queries import get_matches_today
+from queries import get_matches_today, get_matches_per_date
 from scrap import get_matches_df
 
 logging.basicConfig(
@@ -38,7 +38,24 @@ def hoy(update, context):
     img = open('dataframe.png', 'rb')
     update.message.bot.send_photo(update.message.chat.id, open('dataframe.png', 'rb'))
     img.close()
-    # update.message.reply_text(f'```{matches_today}```', parse_mode='MarkdownV2')
+
+
+def fecha(update, context):
+    date = context.args[0]
+    matches = get_matches_df()
+    matches_these_day = get_matches_per_date(matches, date)
+    if not matches_these_day.index.empty:
+        dfi.export(matches_these_day, 'dataframe.png', chrome_path=CHROME_PATH)
+        img = open('dataframe.png', 'rb')
+        update.message.bot.send_photo(update.message.chat.id, open('dataframe.png', 'rb'))
+        img.close()
+    else:
+        update.message.reply_text(f'No hay eventos agendados aún para {date} uwu')
+
+
+def cuando(update, context):
+    substring = context.args[0]
+    update.message.reply_text(f'{context.args}')
 
 
 def main():
@@ -49,6 +66,8 @@ def main():
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(CommandHandler("help", help_command))
     dispatcher.add_handler(CommandHandler("hoy", hoy))
+    dispatcher.add_handler(CommandHandler("cuando", cuando))
+    dispatcher.add_handler(CommandHandler("fecha", fecha))
 
     # Start the Bot
     updater.start_polling()
