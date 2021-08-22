@@ -5,7 +5,7 @@ from telegram import ForceReply
 from telegram.ext import Updater, CommandHandler
 
 from envs import TOKEN, CHROME_PATH
-from queries import get_matches_today, get_matches_per_date
+from queries import get_matches_today, get_matches_per_date, filter_matches_substring
 from scrap import get_matches_df
 
 logging.basicConfig(
@@ -55,7 +55,15 @@ def fecha(update, context):
 
 def cuando(update, context):
     substring = context.args[0]
-    update.message.reply_text(f'{context.args}')
+    matches = get_matches_df()
+    matches_filtered = filter_matches_substring(matches, substring)
+    if not matches_filtered.index.empty:
+        dfi.export(matches_filtered, 'dataframe.png', chrome_path=CHROME_PATH)
+        img = open('dataframe.png', 'rb')
+        update.message.bot.send_photo(update.message.chat.id, open('dataframe.png', 'rb'))
+        img.close()
+    else:
+        update.message.reply_text(f'No se encontraron eventos que contengan {substring} uwu')
 
 
 def main():

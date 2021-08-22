@@ -15,3 +15,9 @@ def get_matches_today(df):
     current_date = locale_dt.date()
     df_filtered = get_matches_per_date(df, current_date)
     return df_filtered
+
+
+def filter_matches_substring(df, txt):
+    return df[df['PARTIDO'].str.contains(txt) |
+              df['COMPETENCIA'].str.contains(txt) |
+              df['CANAL'].str.contains(txt)]
