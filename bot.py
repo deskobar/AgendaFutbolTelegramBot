@@ -71,7 +71,7 @@ def fecha(update, context):
     matches_these_day = get_events_per_date(matches, date)
     if not matches_these_day.index.empty:
         dfi.export(matches_these_day, 'media/dataframe.png', chrome_path=CHROME_PATH)
-        img = open(' media/dataframe.png', 'rb')
+        img = open('media/dataframe.png', 'rb')
         update.message.bot.send_photo(update.message.chat.id, open('media/dataframe.png', 'rb'))
         img.close()
     else:
