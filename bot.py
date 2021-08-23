@@ -4,7 +4,7 @@ import dataframe_image as dfi
 from telegram.ext import Updater, CommandHandler
 
 from envs import TOKEN, CHROME_PATH
-from queries import get_events_today, get_matches_per_date, filter_matches_substring
+from queries import get_events_today, get_events_per_date, filter_events_using_substring
 from scrap import get_events_df
 
 logging.basicConfig(
@@ -68,11 +68,11 @@ def fecha(update, context):
         update.message.reply_text(f'Debes enviar /fecha <fecha> en formato YYYY-MM-DD')
     date = context.args[0]
     matches = get_events_df()
-    matches_these_day = get_matches_per_date(matches, date)
+    matches_these_day = get_events_per_date(matches, date)
     if not matches_these_day.index.empty:
-        dfi.export(matches_these_day, 'dataframe.png', chrome_path=CHROME_PATH)
-        img = open('dataframe.png', 'rb')
-        update.message.bot.send_photo(update.message.chat.id, open('dataframe.png', 'rb'))
+        dfi.export(matches_these_day, 'media/dataframe.png', chrome_path=CHROME_PATH)
+        img = open(' media/dataframe.png', 'rb')
+        update.message.bot.send_photo(update.message.chat.id, open('media/dataframe.png', 'rb'))
         img.close()
     else:
         update.message.reply_text(f'No hay eventos agendados aún para {date} unu. Prueba con otra fecha')
@@ -86,7 +86,7 @@ def cuando(update, context):
         update.message.reply_text(f'Debes enviar /cuando <una palabra>')
     substring = context.args[0]
     matches = get_events_df()
-    matches_filtered = filter_matches_substring(matches, substring)
+    matches_filtered = filter_events_using_substring(matches, substring)
     if not matches_filtered.index.empty:
         dfi.export(matches_filtered, 'dataframe.png', chrome_path=CHROME_PATH)
         img = open('dataframe.png', 'rb')

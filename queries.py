@@ -3,7 +3,7 @@ from datetime import datetime
 from utils import get_current_datetime
 
 
-def get_matches_per_date(df, date):
+def get_events_per_date(df, date):
     """
     Get a Pandas Dataframe where each row has as date the date given
     :param df: The Pandas Dataframe to filter
@@ -24,11 +24,11 @@ def get_events_today(df):
     """
     locale_dt = get_current_datetime()
     current_date = locale_dt.date()
-    df_filtered = get_matches_per_date(df, current_date)
+    df_filtered = get_events_per_date(df, current_date)
     return df_filtered
 
 
-def filter_matches_substring(df, txt):
+def filter_events_using_substring(df, txt):
     """
     Filter the rows of a Pandas Dataframe where some attributes contains the substring given
     :param df: The Pandas Dataframe to filter
