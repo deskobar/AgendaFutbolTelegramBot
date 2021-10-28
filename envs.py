@@ -6,7 +6,7 @@ load_dotenv()
 
 # Token for Telegram API
 TOKEN = os.getenv('TOKEN')
-# Chrome Path for dataframe_image library
-CHROME_PATH = os.getenv('CHROME_PATH')
 # URL to scrap
 URL = os.getenv('URL')
+# Temporal dataframe path
+TEMPORAL_DATAFRAME_PATH = os.getenv('TEMPORAL_DATAFRAME_PATH')

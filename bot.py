@@ -5,7 +5,7 @@ from telegram.ext import Updater, CommandHandler
 
 from answers import HOW_TO_USAGE, DATE_WITHOUT_ARGS, DATE_WITH_NO_COINCIDENCES, WHEN_WITHOUT_ARGS, \
     WHEN_WITH_NO_COINCIDENCES
-from envs import TOKEN, CHROME_PATH
+from envs import TOKEN, TEMPORAL_DATAFRAME_PATH
 from queries import get_events_today, get_events_per_date, filter_events_using_substring
 from scrap import get_events_df
 
@@ -16,8 +16,6 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-# Define a few command handlers. These usually take the two arguments update and
-# context.
 def start(update, context):
     """
     Send a message when the command /start is issued.
@@ -38,8 +36,8 @@ def hoy(update, context):
     """
     matches = get_events_df()
     matches_today = get_events_today(matches)
-    dfi.export(matches_today, 'dataframe.png', table_conversion=None)
-    img = open('dataframe.png', 'rb')
+    dfi.export(matches_today, TEMPORAL_DATAFRAME_PATH, table_conversion=None)
+    img = open(TEMPORAL_DATAFRAME_PATH, 'rb')
     update.message.bot.send_photo(update.message.chat.id, img)
     img.close()
 
@@ -54,8 +52,8 @@ def fecha(update, context):
     matches = get_events_df()
     matches_these_day = get_events_per_date(matches, date)
     if not matches_these_day.index.empty:
-        dfi.export(matches_these_day, 'media/dataframe.png', table_conversion=None)
-        img = open('media/dataframe.png', 'rb')
+        dfi.export(matches_these_day, TEMPORAL_DATAFRAME_PATH, table_conversion=None)
+        img = open(TEMPORAL_DATAFRAME_PATH, 'rb')
         update.message.bot.send_photo(update.message.chat.id, img)
         img.close()
     else:
@@ -72,8 +70,8 @@ def cuando(update, context):
     matches = get_events_df()
     matches_filtered = filter_events_using_substring(matches, substring)
     if not matches_filtered.index.empty:
-        dfi.export(matches_filtered, 'dataframe.png', table_conversion=None)
-        img = open('dataframe.png', 'rb')
+        dfi.export(matches_filtered, TEMPORAL_DATAFRAME_PATH, table_conversion=None)
+        img = open(TEMPORAL_DATAFRAME_PATH, 'rb')
         update.message.bot.send_photo(update.message.chat.id, img)
         img.close()
     else:
