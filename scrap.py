@@ -1,7 +1,7 @@
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
-
+from os.path import exists
 from envs import URL
 from utils import parse_day_to_date, get_current_datetime
 
@@ -33,12 +33,11 @@ def get_events_df():
     :return: A Pandas Dataframe.
     """
     current_date = get_current_datetime().date()
-    df_filename = f'media/{current_date}.pkl'
-    try:
-        df = pd.read_pickle(df_filename)
+    df_path = f'media/{current_date}.pkl'
+    if exists(df_path):
+        df = pd.read_pickle(df_path)
         return df
-    except Exception as e:
-        print(e)
+    else:
         html = get_html_text()
         df = pd.read_html(html)[0]
         df.drop(['PARTIDO.1', 'PARTIDO.2', 'PARTIDO.3'], axis=1, inplace=True)
@@ -46,5 +45,5 @@ def get_events_df():
         df['FECHA'] = df['FECHA'].map(lambda fecha: parse_day_to_date(int(fecha[-2:])))
         df['CANAL'] = channels
         # Saving the Pandas Dataframe in order to avoid unnecessary queries over the Website.
-        df.to_pickle(df_filename)
+        df.to_pickle(df_path)
         return df
