@@ -38,7 +38,7 @@ def hoy(update, context):
     """
     matches = get_events_df()
     matches_today = get_events_today(matches)
-    dfi.export(matches_today, 'dataframe.png', chrome_path=CHROME_PATH)
+    dfi.export(matches_today, 'dataframe.png', table_conversion=None)
     img = open('dataframe.png', 'rb')
     update.message.bot.send_photo(update.message.chat.id, img)
     img.close()
@@ -54,7 +54,7 @@ def fecha(update, context):
     matches = get_events_df()
     matches_these_day = get_events_per_date(matches, date)
     if not matches_these_day.index.empty:
-        dfi.export(matches_these_day, 'media/dataframe.png', chrome_path=CHROME_PATH)
+        dfi.export(matches_these_day, 'media/dataframe.png', table_conversion=None)
         img = open('media/dataframe.png', 'rb')
         update.message.bot.send_photo(update.message.chat.id, img)
         img.close()
@@ -72,7 +72,7 @@ def cuando(update, context):
     matches = get_events_df()
     matches_filtered = filter_events_using_substring(matches, substring)
     if not matches_filtered.index.empty:
-        dfi.export(matches_filtered, 'dataframe.png', chrome_path=CHROME_PATH)
+        dfi.export(matches_filtered, 'dataframe.png', table_conversion=None)
         img = open('dataframe.png', 'rb')
         update.message.bot.send_photo(update.message.chat.id, img)
         img.close()
