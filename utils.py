@@ -1,6 +1,9 @@
 from datetime import datetime, date
 
+import dataframe_image as dfi
 import pytz
+
+from envs import TEMPORAL_DATAFRAME_PATH
 
 
 def get_current_datetime():
@@ -28,3 +31,21 @@ def parse_day_to_date(day):
     else:
         year, month = current_year, current_month + 1
     return date(year=year, month=month, day=day)
+
+
+def send_img_or_msg_if_no_data(update, df, msg, value):
+    """
+    Send a img of the dataframe content if it have it, an informative msg otherwise
+    :param update: A Telegram Bot Updater
+    :param df: A Pandas DataFrame
+    :param msg: A String
+    :param value: A String
+    :return: None
+    """
+    if not df.index.empty:
+        dfi.export(df, TEMPORAL_DATAFRAME_PATH, table_conversion=None)
+        img = open(TEMPORAL_DATAFRAME_PATH, 'rb')
+        update.message.bot.send_photo(update.message.chat.id, img)
+        img.close()
+    else:
+        update.message.reply_text(msg.format(value))

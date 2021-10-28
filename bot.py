@@ -8,6 +8,7 @@ from answers import HOW_TO_USAGE, DATE_WITHOUT_ARGS, DATE_WITH_NO_COINCIDENCES, 
 from envs import TOKEN, TEMPORAL_DATAFRAME_PATH
 from queries import get_events_today, get_events_per_date, filter_events_using_substring
 from scrap import get_events_df
+from utils import send_img_or_msg_if_no_data
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
@@ -37,9 +38,7 @@ def hoy(update, context):
     matches = get_events_df()
     matches_today = get_events_today(matches)
     dfi.export(matches_today, TEMPORAL_DATAFRAME_PATH, table_conversion=None)
-    img = open(TEMPORAL_DATAFRAME_PATH, 'rb')
-    update.message.bot.send_photo(update.message.chat.id, img)
-    img.close()
+    send_img_or_msg_if_no_data(update, matches_today, DATE_WITH_NO_COINCIDENCES, 'hoy')
 
 
 def fecha(update, context):
@@ -51,13 +50,7 @@ def fecha(update, context):
     date = context.args[0]
     matches = get_events_df()
     matches_these_day = get_events_per_date(matches, date)
-    if not matches_these_day.index.empty:
-        dfi.export(matches_these_day, TEMPORAL_DATAFRAME_PATH, table_conversion=None)
-        img = open(TEMPORAL_DATAFRAME_PATH, 'rb')
-        update.message.bot.send_photo(update.message.chat.id, img)
-        img.close()
-    else:
-        update.message.reply_text(DATE_WITH_NO_COINCIDENCES.format(date))
+    send_img_or_msg_if_no_data(update, matches_these_day, DATE_WITH_NO_COINCIDENCES, date)
 
 
 def cuando(update, context):
@@ -69,13 +62,7 @@ def cuando(update, context):
     substring = context.args[0]
     matches = get_events_df()
     matches_filtered = filter_events_using_substring(matches, substring)
-    if not matches_filtered.index.empty:
-        dfi.export(matches_filtered, TEMPORAL_DATAFRAME_PATH, table_conversion=None)
-        img = open(TEMPORAL_DATAFRAME_PATH, 'rb')
-        update.message.bot.send_photo(update.message.chat.id, img)
-        img.close()
-    else:
-        update.message.reply_text(WHEN_WITH_NO_COINCIDENCES.format(substring))
+    send_img_or_msg_if_no_data(update, matches_filtered, WHEN_WITH_NO_COINCIDENCES, substring)
 
 
 def main():
