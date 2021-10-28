@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from utils import get_current_datetime
 
 
@@ -7,12 +5,10 @@ def get_events_per_date(df, date):
     """
     Get a Pandas Dataframe where each row has as date the date given
     :param df: The Pandas Dataframe to filter
-    :param date: The string date or Datetime.Date to filter
+    :param date: A Datetime.Date to filter
     :return: A Pandas Dataframe filtered by the date
     """
-    if type(date) is str:
-        date = datetime.strptime(date, '%Y-%m-%d').date()
-    df_filtered = df.loc[df.FECHA == date]
+    df_filtered = df[df.FECHA == date]
     return df_filtered
 
 

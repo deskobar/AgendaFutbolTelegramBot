@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 
 import dataframe_image as dfi
 from telegram.ext import Updater, CommandHandler
@@ -48,8 +49,9 @@ def fecha(update, context):
     if len(context.args) != 1:
         update.message.reply_text(DATE_WITHOUT_ARGS)
     date = context.args[0]
+    date_obj = datetime.strptime(date, '%Y-%m-%d').date()
     matches = get_events_df()
-    matches_these_day = get_events_per_date(matches, date)
+    matches_these_day = get_events_per_date(matches, date_obj)
     send_img_or_msg_if_no_data(update, matches_these_day, DATE_WITH_NO_COINCIDENCES, date)
 
 
