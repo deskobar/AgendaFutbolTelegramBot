@@ -8,3 +8,5 @@ load_dotenv()
 TOKEN = os.getenv('TOKEN')
 # Chrome Path for dataframe_image library
 CHROME_PATH = os.getenv('CHROME_PATH')
+# URL to scrap
+URL = os.getenv('URL')

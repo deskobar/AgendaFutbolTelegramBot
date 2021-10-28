@@ -2,6 +2,7 @@ import pandas as pd
 import requests
 from bs4 import BeautifulSoup
 
+from envs import URL
 from utils import parse_day_to_date, get_current_datetime
 
 
@@ -10,8 +11,7 @@ def get_html_text():
     Get the HTML content as plain text
     :return: A string html
     """
-    url = 'https://agenda.redgol.cl/tv/schedule/agenda-principal/'
-    r = requests.get(url)
+    r = requests.get(URL)
     return r.text
 
 
