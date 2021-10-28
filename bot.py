@@ -3,6 +3,8 @@ import logging
 import dataframe_image as dfi
 from telegram.ext import Updater, CommandHandler
 
+from answers import HOW_TO_USAGE, DATE_WITHOUT_ARGS, DATE_WITH_NO_COINCIDENCES, WHEN_WITHOUT_ARGS, \
+    WHEN_WITH_NO_COINCIDENCES
 from envs import TOKEN, CHROME_PATH
 from queries import get_events_today, get_events_per_date, filter_events_using_substring
 from scrap import get_events_df
@@ -20,32 +22,14 @@ def start(update, context):
     """
     Send a message when the command /start is issued.
     """
-    txt = """
-    Bienvenido! Los comandos con que me puedes llamar son:
-    /hoy 
-        Entrega los partidos del día (a la hora de Chile)
-    /fecha <fecha>
-        Entrega los partidos para la fecha dada, debe estar en formato YYYY-MM-DD
-    /cuando <palabra>
-        Entrega los eventos que contienen la palabra en el nombre del evento, canal o liga.
-    """
-    update.message.reply_text(txt)
+    update.message.reply_text(HOW_TO_USAGE)
 
 
 def help_command(update, context):
     """
     Send a message when the command /help is issued.
     """
-    txt = """
-    Bienvenido! Los comandos con que me puedes llamar son:
-    /hoy 
-        Entrega los partidos del día (a la hora de Chile)
-    /fecha <fecha>
-        Entrega los partidos para la fecha dada, debe estar en formato YYYY-MM-DD
-    /cuando <palabra>
-        Entrega los eventos que contienen la palabra en el nombre del evento, canal o liga.
-    """
-    update.message.reply_text(txt)
+    update.message.reply_text(HOW_TO_USAGE)
 
 
 def hoy(update, context):
@@ -56,7 +40,7 @@ def hoy(update, context):
     matches_today = get_events_today(matches)
     dfi.export(matches_today, 'dataframe.png', chrome_path=CHROME_PATH)
     img = open('dataframe.png', 'rb')
-    update.message.bot.send_photo(update.message.chat.id, open('dataframe.png', 'rb'))
+    update.message.bot.send_photo(update.message.chat.id, img)
     img.close()
 
 
@@ -65,17 +49,17 @@ def fecha(update, context):
     Send all the events for a given string date
     """
     if len(context.args) != 1:
-        update.message.reply_text(f'Debes enviar /fecha <fecha> en formato YYYY-MM-DD')
+        update.message.reply_text(DATE_WITHOUT_ARGS)
     date = context.args[0]
     matches = get_events_df()
     matches_these_day = get_events_per_date(matches, date)
     if not matches_these_day.index.empty:
         dfi.export(matches_these_day, 'media/dataframe.png', chrome_path=CHROME_PATH)
         img = open('media/dataframe.png', 'rb')
-        update.message.bot.send_photo(update.message.chat.id, open('media/dataframe.png', 'rb'))
+        update.message.bot.send_photo(update.message.chat.id, img)
         img.close()
     else:
-        update.message.reply_text(f'No hay eventos agendados aún para {date} unu. Prueba con otra fecha')
+        update.message.reply_text(DATE_WITH_NO_COINCIDENCES.format(date))
 
 
 def cuando(update, context):
@@ -83,18 +67,17 @@ def cuando(update, context):
     Given all the events that contains a substring given in their columns
     """
     if len(context.args) != 1:
-        update.message.reply_text(f'Debes enviar /cuando <una palabra>')
+        update.message.reply_text(WHEN_WITHOUT_ARGS)
     substring = context.args[0]
     matches = get_events_df()
     matches_filtered = filter_events_using_substring(matches, substring)
     if not matches_filtered.index.empty:
         dfi.export(matches_filtered, 'dataframe.png', chrome_path=CHROME_PATH)
         img = open('dataframe.png', 'rb')
-        update.message.bot.send_photo(update.message.chat.id, open('dataframe.png', 'rb'))
+        update.message.bot.send_photo(update.message.chat.id, img)
         img.close()
     else:
-        update.message.reply_text(f'No se encontraron eventos que contengan {substring} unu. Prueba escribiéndolo de '
-                                  f'otra forma')
+        update.message.reply_text(WHEN_WITH_NO_COINCIDENCES.format(substring))
 
 
 def main():
