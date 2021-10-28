@@ -51,13 +51,13 @@ def get_events_df():
     """
     current_date = get_current_datetime().date()
     df_path = f'media/{current_date}.pkl'
-    if exists(df_path):
-        df = pd.read_pickle(df_path)
-        return df
-    else:
+    if not exists(df_path):
         html = get_html_text()
         df = pd.read_html(html)[0]
         df_processed = process_df_from_url(df, html)
-        # Saving the Pandas Dataframe in order to avoid unnecessary queries over the Website.
+        # Saving the Dataframe to avoid unnecessary requests over the Website.
         df_processed.to_pickle(df_path)
+        return df_processed
+    else:
+        df_processed = pd.read_pickle(df_path)
         return df_processed
