@@ -1,9 +1,8 @@
+import io
 from datetime import datetime, date
 
 import dataframe_image as dfi
 import pytz
-
-from envs import TEMPORAL_DATAFRAME_PATH
 
 
 def get_current_datetime():
@@ -43,9 +42,8 @@ def send_img_or_msg_if_no_content(update, df, msg, value):
     :return: None
     """
     if df.index.empty is True:
-        dfi.export(df, TEMPORAL_DATAFRAME_PATH, table_conversion=None)
-        img = open(TEMPORAL_DATAFRAME_PATH, 'rb')
-        update.message.bot.send_photo(update.message.chat.id, img)
-        img.close()
+        with io.BytesIO() as tmp:
+            dfi.export(df, tmp, table_conversion=None)
+            update.message.bot.send_photo(update.message.chat.id, tmp)
     else:
         update.message.reply_text(msg.format(value))
