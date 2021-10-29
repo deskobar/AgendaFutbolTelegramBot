@@ -42,7 +42,7 @@ def send_img_or_msg_if_no_content(update, df, msg, value):
     :param value: A String
     :return: None
     """
-    if not df.index.empty:
+    if df.index.empty is True:
         dfi.export(df, TEMPORAL_DATAFRAME_PATH, table_conversion=None)
         img = open(TEMPORAL_DATAFRAME_PATH, 'rb')
         update.message.bot.send_photo(update.message.chat.id, img)
