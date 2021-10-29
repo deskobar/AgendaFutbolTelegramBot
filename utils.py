@@ -33,7 +33,7 @@ def parse_day_to_date(day):
     return date(year=year, month=month, day=day)
 
 
-def send_img_or_msg_if_no_data(update, df, msg, value):
+def send_img_or_msg_if_no_content(update, df, msg, value):
     """
     Send a img of the dataframe content if it have it, an informative msg otherwise
     :param update: A Telegram Bot Updater

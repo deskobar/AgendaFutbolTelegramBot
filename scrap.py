@@ -29,7 +29,7 @@ def get_channels(html_text):
     return channels
 
 
-def process_df_from_url(df, html):
+def process_df_using_html(df, html):
     """
     Drop unused columns from a dataframe
     :param df: A Pandas DataFrame
@@ -53,11 +53,11 @@ def get_events_df():
     df_path = f'media/{current_date}.pkl'
     if not exists(df_path):
         html = get_html_text()
-        df = pd.read_html(html)[0]
-        df_processed = process_df_from_url(df, html)
+        raw_df = pd.read_html(html)[0]
+        df = process_df_using_html(raw_df, html)
         # Saving the Dataframe to avoid unnecessary requests over the Website.
-        df_processed.to_pickle(df_path)
-        return df_processed
+        df.to_pickle(df_path)
+        return df
     else:
-        df_processed = pd.read_pickle(df_path)
-        return df_processed
+        df = pd.read_pickle(df_path)
+        return df

@@ -8,7 +8,7 @@ def get_events_per_date(df, date):
     :param date: A Datetime.Date to filter
     :return: A Pandas Dataframe filtered by the date
     """
-    df_filtered = df[df.FECHA == date]
+    df_filtered = df[df['FECHA'] == date]
     return df_filtered
 
 
