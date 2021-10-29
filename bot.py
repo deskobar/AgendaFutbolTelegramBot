@@ -46,11 +46,12 @@ def fecha(update, context):
     """
     if len(context.args) != 1:
         update.message.reply_text(DATE_WITHOUT_ARGS)
-    date = context.args[0]
-    date_obj = datetime.strptime(date, '%Y-%m-%d').date()
-    matches = get_events_df()
-    matches_these_day = get_events_per_date(matches, date_obj)
-    send_img_or_msg_if_no_content(update, matches_these_day, DATE_WITH_NO_COINCIDENCES, date)
+    else:
+        date = context.args[0]
+        date_obj = datetime.strptime(date, '%Y-%m-%d').date()
+        matches = get_events_df()
+        matches_these_day = get_events_per_date(matches, date_obj)
+        send_img_or_msg_if_no_content(update, matches_these_day, DATE_WITH_NO_COINCIDENCES, date)
 
 
 def cuando(update, context):
@@ -59,10 +60,11 @@ def cuando(update, context):
     """
     if len(context.args) != 1:
         update.message.reply_text(WHEN_WITHOUT_ARGS)
-    substring = context.args[0]
-    matches = get_events_df()
-    matches_filtered = filter_events_using_substring(matches, substring)
-    send_img_or_msg_if_no_content(update, matches_filtered, WHEN_WITH_NO_COINCIDENCES, substring)
+    else:
+        substring = context.args[0]
+        matches = get_events_df()
+        matches_filtered = filter_events_using_substring(matches, substring)
+        send_img_or_msg_if_no_content(update, matches_filtered, WHEN_WITH_NO_COINCIDENCES, substring)
 
 
 def main():
