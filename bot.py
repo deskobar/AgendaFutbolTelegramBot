@@ -85,7 +85,7 @@ def main():
     dispatcher.add_handler(CommandHandler("hoy", hoy))
     dispatcher.add_handler(CommandHandler("cuando", cuando))
     dispatcher.add_handler(CommandHandler("fecha", fecha))
-    dispatcher.add_handler(CommandHandler("todo", fecha))
+    dispatcher.add_handler(CommandHandler("todo", todo))
 
     # Start the Bot
     updater.start_polling()
