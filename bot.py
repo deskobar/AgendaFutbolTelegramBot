@@ -4,7 +4,7 @@ from datetime import datetime
 from telegram.ext import Updater, CommandHandler
 
 from answers import HOW_TO_USAGE, DATE_WITHOUT_ARGS, DATE_WITH_NO_COINCIDENCES, WHEN_WITHOUT_ARGS, \
-    WHEN_WITH_NO_COINCIDENCES
+    WHEN_WITH_NO_COINCIDENCES, ALL_WITH_NO_COINCIDENCES
 from envs import TOKEN
 from queries import get_events_today, get_events_per_date, filter_events_using_substring
 from scrap import get_events_df
@@ -67,6 +67,14 @@ def cuando(update, context):
         send_img_or_msg_if_no_content(update, matches_filtered, WHEN_WITH_NO_COINCIDENCES, substring)
 
 
+def todo(update, context):
+    """
+    Return all the events available
+    """
+    matches = get_events_df()
+    send_img_or_msg_if_no_content(update, matches, ALL_WITH_NO_COINCIDENCES, 'uwu')
+
+
 def main():
     updater = Updater(TOKEN)
 
@@ -77,6 +85,7 @@ def main():
     dispatcher.add_handler(CommandHandler("hoy", hoy))
     dispatcher.add_handler(CommandHandler("cuando", cuando))
     dispatcher.add_handler(CommandHandler("fecha", fecha))
+    dispatcher.add_handler(CommandHandler("todo", fecha))
 
     # Start the Bot
     updater.start_polling()
