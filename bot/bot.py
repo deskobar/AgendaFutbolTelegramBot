@@ -8,7 +8,7 @@ from commands.Help import help
 from commands.Start import start
 from commands.Today import today
 from commands.When import when
-from envs import TOKEN
+from settings import TELEGRAM_TOKEN
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 
 def main():
-    updater = Updater(TOKEN)
+    updater = Updater(TELEGRAM_TOKEN)
     dispatcher = updater.dispatcher
 
     dispatcher.add_handler(CommandHandler("start", start))
