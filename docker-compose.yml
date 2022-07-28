@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+  events-api:
+    container_name: events-api
+    build: ./events-api
+    restart: always
+
+  telegram-bot:
+    container_name: telegram-bot
+    build: ./bot
+    restart: always
+    depends_on:
+      - events-api
