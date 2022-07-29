@@ -87,13 +87,39 @@ def filter_events_using_substring(df, txt):
     :return: A Pandas Dataframe where each rows contain the substring given or approximate.
     """
     df_cpy = df.copy()
-    df_cpy['Score'] = df_cpy.apply(lambda entry: calculate_score(entry, txt), axis=1)
-    df_cpy = df_cpy.sort_values('Score', ascending=False)
-    df_approximate = get_approximate_matches(df_cpy)
-    df_substring = get_matches_are_substring(df_cpy, txt)
+    df_with_teams = add_teams(df_cpy)
+    df_with_teams['Score'] = df_with_teams.apply(lambda entry: calculate_score(entry, txt), axis=1)
+    df_with_teams = df_with_teams.sort_values('Score', ascending=False)
+    df_approximate = get_approximate_matches(df_with_teams)
+    df_substring = get_matches_are_substring(df_with_teams, txt)
     matches = pd.concat([df_substring, df_approximate])
     events = matches.drop_duplicates()
+    print(df_approximate)
     return events
+
+
+def add_teams(df):
+    """
+    Add teams to DataFrame
+    :param df: The Pandas Dataframe
+    :return: A pandas.DataFrame
+    """
+    df_cpy = df.copy()
+    df_cpy['team_1'] = df_cpy.apply(lambda r: split_by_team(r)[0], axis=1)
+    df_cpy['team_2'] = df_cpy.apply(lambda r: split_by_team(r)[1], axis=1)
+    return df_cpy
+
+
+def split_by_team(r):
+    """
+    Split a row by team
+    :param r: The Pandas Dataframe row
+    :return: A list
+    """
+    event = r['PARTIDO']
+    split = list(map(lambda team: team.strip(), event.split('v/s')))
+    split = split if len(split) == 2 else [event, event]
+    return split
 
 
 def get_matches_are_substring(df, txt):
@@ -108,7 +134,7 @@ def get_matches_are_substring(df, txt):
               df['CANAL'].str.contains(txt, case=False)]
 
 
-def get_approximate_matches(df, threshold=50):
+def get_approximate_matches(df, threshold=60):
     """
     Filter the rows of a Pandas Dataframe with a threshold for a specific column
     :param df: The Pandas Dataframe to filter
@@ -127,6 +153,8 @@ def calculate_score(row, txt):
     """
     fields_and_weight = [{'field': 'PARTIDO', 'weight': 1},
                          {'field': 'COMPETENCIA', 'weight': 1},
-                         {'field': 'CANAL', 'weight': 1}]
+                         {'field': 'CANAL', 'weight': 1},
+                         {'field': 'team_1', 'weight': 1},
+                         {'field': 'team_2', 'weight': 1}]
     scores = [fuzz.partial_ratio(txt, row[entry['field']]) * entry['weight'] for entry in fields_and_weight]
     return max(scores)
