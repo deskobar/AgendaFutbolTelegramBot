@@ -84,15 +84,16 @@ def filter_events_using_substring(df, txt):
     Filter the rows of a Pandas Dataframe where some attributes contain the substring given
     :param df: The Pandas Dataframe to filter
     :param txt: The substring to search
-    :return: A Pandas Dataframe where each rows contain the substring given or an approximate.
+    :return: A Pandas Dataframe where each rows contain the substring given or approximate.
     """
     df_cpy = df.copy()
     df_cpy['Score'] = df_cpy.apply(lambda entry: calculate_score(entry, txt), axis=1)
     df_cpy = df_cpy.sort_values('Score', ascending=False)
     df_approximate = get_approximate_matches(df_cpy)
     df_substring = get_matches_are_substring(df_cpy, txt)
-    matches = pd.concat([df_approximate, df_substring])
-    return matches
+    matches = pd.concat([df_substring, df_approximate])
+    events = matches.drop_duplicates(subset=['date', 'match', 'tournament'])
+    return events
 
 
 def get_matches_are_substring(df, txt):
@@ -125,7 +126,7 @@ def calculate_score(row, txt):
     :return: An int that represents the match score between the row and the given text.
     """
     fields_and_weight = [{'field': 'PARTIDO', 'weight': 1},
-                         {'field': 'COMPETENCIA', 'weight': 0},
-                         {'field': 'CANAL', 'weight': 0}]
+                         {'field': 'COMPETENCIA', 'weight': 1},
+                         {'field': 'CANAL', 'weight': 1}]
     scores = [fuzz.partial_ratio(txt, row[entry['field']]) * entry['weight'] for entry in fields_and_weight]
-    return sum(scores)
+    return max(scores)
