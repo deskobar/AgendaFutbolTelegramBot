@@ -89,12 +89,10 @@ def filter_events_using_substring(df, txt):
     df_cpy = df.copy()
     df_with_teams = add_teams(df_cpy)
     df_with_teams['Score'] = df_with_teams.apply(lambda entry: calculate_score(entry, txt), axis=1)
-    df_with_teams = df_with_teams.sort_values('Score', ascending=False)
     df_approximate = get_approximate_matches(df_with_teams)
     df_substring = get_matches_are_substring(df_with_teams, txt)
     matches = pd.concat([df_substring, df_approximate])
     events = matches.drop_duplicates()
-    print(df_approximate)
     return events
 
 
