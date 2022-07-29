@@ -92,7 +92,7 @@ def filter_events_using_substring(df, txt):
     df_approximate = get_approximate_matches(df_cpy)
     df_substring = get_matches_are_substring(df_cpy, txt)
     matches = pd.concat([df_substring, df_approximate])
-    events = matches.drop_duplicates(subset=['date', 'match', 'tournament'])
+    events = matches.drop_duplicates()
     return events
 
 
