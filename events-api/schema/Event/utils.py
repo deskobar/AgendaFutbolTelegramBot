@@ -127,9 +127,10 @@ def get_matches_are_substring(df, txt):
     :param txt: The substring to search
     :return: A Pandas Dataframe where each rows contain the substring given.
     """
-    return df[df['PARTIDO'].str.contains(txt, case=False) |
-              df['COMPETENCIA'].str.contains(txt, case=False) |
-              df['CANAL'].str.contains(txt, case=False)]
+    df_cpy = df.copy()
+    return df_cpy[df_cpy['PARTIDO'].str.contains(txt, case=False) |
+                  df_cpy['COMPETENCIA'].str.contains(txt, case=False) |
+                  df_cpy['CANAL'].str.contains(txt, case=False)]
 
 
 def get_approximate_matches(df, threshold=60):
@@ -139,7 +140,8 @@ def get_approximate_matches(df, threshold=60):
     :param threshold: The minimum value to filter
     :return: A Pandas Dataframe filtered.
     """
-    return df[df['Score'] >= threshold]
+    df_cpy = df.copy()
+    return df_cpy[df_cpy['Score'] >= threshold]
 
 
 def calculate_score(row, txt):
