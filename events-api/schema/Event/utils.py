@@ -1,12 +1,13 @@
 from os.path import exists
+from pathlib import Path
 
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
 from settings import URL
+from thefuzz import fuzz
 
 from utils import parse_day_to_date, get_current_datetime
-from pathlib import Path
 
 
 def get_html_text():
@@ -80,11 +81,51 @@ def get_events_df_per_date(df, date):
 
 def filter_events_using_substring(df, txt):
     """
-    Filter the rows of a Pandas Dataframe where some attributes contains the substring given
+    Filter the rows of a Pandas Dataframe where some attributes contain the substring given
     :param df: The Pandas Dataframe to filter
     :param txt: The substring to search
-    :return: A Pandas Dataframe where each rows contains the substring given.
+    :return: A Pandas Dataframe where each rows contain the substring given or an approximate.
+    """
+    df_cpy = df.copy()
+    df_cpy['Score'] = df_cpy.apply(lambda entry: calculate_score(entry, txt), axis=1)
+    df_cpy = df_cpy.sort_values('Score', ascending=False)
+    df_approximate = get_approximate_matches(df_cpy)
+    df_substring = get_matches_are_substring(df_cpy, txt)
+    matches = pd.concat([df_approximate, df_substring])
+    return matches
+
+
+def get_matches_are_substring(df, txt):
+    """
+    Filter the rows of a Pandas Dataframe where some attributes contain the substring given
+    :param df: The Pandas Dataframe to filter
+    :param txt: The substring to search
+    :return: A Pandas Dataframe where each rows contain the substring given.
     """
     return df[df['PARTIDO'].str.contains(txt, case=False) |
               df['COMPETENCIA'].str.contains(txt, case=False) |
               df['CANAL'].str.contains(txt, case=False)]
+
+
+def get_approximate_matches(df, threshold=50):
+    """
+    Filter the rows of a Pandas Dataframe with a threshold for a specific column
+    :param df: The Pandas Dataframe to filter
+    :param threshold: The minimum value to filter
+    :return: A Pandas Dataframe filtered.
+    """
+    return df[df['Score'] >= threshold]
+
+
+def calculate_score(row, txt):
+    """
+    Calculate the coincidence of the row with a substring
+    :param row: The Pandas Dataframe row
+    :param txt: The substring to search
+    :return: An int that represents the match score between the row and the given text.
+    """
+    fields_and_weight = [{'field': 'PARTIDO', 'weight': 1},
+                         {'field': 'COMPETENCIA', 'weight': 0},
+                         {'field': 'CANAL', 'weight': 0}]
+    scores = [fuzz.partial_ratio(txt, row[entry['field']]) * entry['weight'] for entry in fields_and_weight]
+    return sum(scores)
