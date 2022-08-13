@@ -22,7 +22,7 @@ def main():
     dispatcher.add_handler(CommandHandler("cuando", when))
     dispatcher.add_handler(CommandHandler("fecha", date))
     dispatcher.add_handler(CommandHandler("todo", all))
-    dispatcher.add_handler(CommandHandler("version", version))
+    # dispatcher.add_handler(CommandHandler("version", version))
     updater.start_polling()
     updater.idle()
 
