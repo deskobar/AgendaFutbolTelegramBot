@@ -1,6 +1,9 @@
 # /start
 HOW_TO_USAGE = """
-    Bienvenido! Los comandos con que me puedes llamar son:
+    Bienvenido! Este bot responde a la pregunta quién juega hoy?
+    
+    Los comandos con que me puedes llamar son:
+    
     /todo
         Entrega todos los eventos disponibles
     /hoy 
@@ -9,6 +12,11 @@ HOW_TO_USAGE = """
         Entrega los eventos para la fecha dada, debe estar en formato YYYY-MM-DD
     /cuando <palabra>
         Entrega los eventos que contienen la palabra en el nombre del evento, canal o liga.
+    
+    Si eres ñoño como yo, te encatará saber cuales son las tecnologías usadas:
+    - Python
+    - FastAPI
+    - GraphQL
     """
 
 # /fecha
@@ -38,5 +46,5 @@ ALL_WITH_NO_COINCIDENCES = """
 # /version
 
 VERSION = """
-    0.0.1
+    0.0.2
 """
