@@ -34,3 +34,9 @@ WHEN_WITH_NO_COINCIDENCES = """
 ALL_WITH_NO_COINCIDENCES = """
     No hay eventos disponibles, prueba más tarde {}.
 """
+
+# /version
+
+VERSION = """
+    0.0.1
+"""

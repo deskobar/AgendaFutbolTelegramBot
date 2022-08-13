@@ -4,3 +4,4 @@ from .Help import help
 from .Start import start
 from .Today import today
 from .When import when
+from .Version import version
