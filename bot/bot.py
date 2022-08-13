@@ -2,12 +2,7 @@ import logging
 
 from telegram.ext import Updater, CommandHandler
 
-from commands.All import all
-from commands.Date import date
-from commands.Help import help
-from commands.Start import start
-from commands.Today import today
-from commands.When import when
+from commands import (all, date, help, start, today, when)
 from settings import TELEGRAM_TOKEN
 
 logging.basicConfig(
@@ -27,7 +22,7 @@ def main():
     dispatcher.add_handler(CommandHandler("cuando", when))
     dispatcher.add_handler(CommandHandler("fecha", date))
     dispatcher.add_handler(CommandHandler("todo", all))
-
+    dispatcher.add_handler(CommandHandler("version", version))
     updater.start_polling()
     updater.idle()
 
