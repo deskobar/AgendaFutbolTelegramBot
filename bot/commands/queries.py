@@ -25,8 +25,8 @@ events_per_date = gql("""
 """)
 
 events_substring = gql("""
-    query events($text: String!) {
-        eventsMatchText(text: $text) {
+    query events($text: String!, $userId: String!) {
+        eventsMatchText(text: $text, userId: $userId) {
             date
             match
             tournament
