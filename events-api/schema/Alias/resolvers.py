@@ -1,16 +1,19 @@
-aliases = {}
+from models import Alias
 
 
-def set_alias(user_id: str, team_name: str, alias: str):
-    user_data = aliases.get(user_id, {})
-    user_data[alias] = team_name
-    aliases[user_id] = user_data
+async def set_alias(user_id: str, team_name: str, alias: str):
+    try:
+        prev_alias = await Alias.objects.get(user_id=user_id, team_name=team_name)
+        await prev_alias.update(team_name=team_name)
+    except Exception:  # noqa
+        await Alias.objects.create(user_id=user_id, team_name=team_name, alias=alias)
+    finally:
+        return "Alias set successfully"
 
-    print(aliases)
 
-    return "Alias set successfully"
-
-
-def get_alias(user_id: str, team_name: str):
-    user_data = aliases.get(user_id, {})
-    return user_data.get(team_name, 'Alias not defined yet')
+async def get_alias(user_id: str, team_name: str):
+    try:
+        prev_alias = await Alias.objects.get(user_id=user_id, team_name=team_name)
+        return prev_alias.alias
+    except Exception:  # noqa
+        return "Alias not found"
