@@ -5,6 +5,8 @@ services:
     container_name: events-api
     build: ./events-api
     restart: always
+    volumes:
+      - ./db:/app/db
 
   telegram-bot:
     container_name: telegram-bot
