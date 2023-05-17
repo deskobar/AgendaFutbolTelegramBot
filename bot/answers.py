@@ -21,6 +21,8 @@ HOW_TO_USAGE = """
     - Python
     - FastAPI
     - GraphQL
+    - ORM (SQLAlchemy)
+    - SQLite
     """
 
 # /fecha

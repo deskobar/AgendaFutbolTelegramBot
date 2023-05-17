@@ -27,5 +27,13 @@ La documentación escrita hasta el momento corresponde a:
         Entrega la versión del bot.
 ```
 
+Si eres ñoño como yo, te encantará saber cuales son las tecnologías usadas:
+
+- Python
+- FastAPI
+- GraphQL
+- ORM (SQLAlchemy)
+- SQLite
+
 --- 
 Cualquier cosa contactarme a david.escobar@ug.uchile.cl
