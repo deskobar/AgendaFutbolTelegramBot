@@ -23,7 +23,7 @@ def get_channels(html_text):
     """
     Get the channels of each event from an HTML as plain text
     :param html_text: The HTML as plain text
-    :return: A List of string, where each belows to a Channel.
+    :return: A List of string, where each below to a Channel.
     """
     soup = BeautifulSoup(html_text, 'html.parser')
     channels_elements = soup.findAll('img', class_='di-tv-channel-thumb', alt=True)
@@ -133,7 +133,7 @@ def get_matches_are_substring(df, txt):
                   df_cpy['CANAL'].str.contains(txt, case=False)]
 
 
-def get_approximate_matches(df, threshold=60):
+def get_approximate_matches(df, threshold=85):
     """
     Filter the rows of a Pandas Dataframe with a threshold for a specific column
     :param df: The Pandas Dataframe to filter
@@ -156,5 +156,10 @@ def calculate_score(row, txt):
                          {'field': 'CANAL', 'weight': 1},
                          {'field': 'team_1', 'weight': 1},
                          {'field': 'team_2', 'weight': 1}]
-    scores = [fuzz.partial_ratio(txt, row[entry['field']]) * entry['weight'] for entry in fields_and_weight]
+
+    scores = [
+        fuzz.partial_ratio(txt.lower(), row[entry['field']].lower()) * entry['weight']
+        for entry in fields_and_weight
+    ]
+
     return max(scores)
