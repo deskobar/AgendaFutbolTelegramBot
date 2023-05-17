@@ -35,3 +35,9 @@ events_substring = gql("""
         }
     }
 """)
+
+set_alias = gql("""
+    mutation setAlias($userId: String!, $teamName: String!, $alias: String!) {
+        setAlias(userId: $userId, teamName: $teamName, alias: $alias)
+    }
+""")

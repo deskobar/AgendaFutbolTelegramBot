@@ -12,8 +12,12 @@ HOW_TO_USAGE = """
         Entrega los eventos para la fecha dada, debe estar en formato YYYY-MM-DD
     /cuando <palabra>
         Entrega los eventos que contienen la palabra en el nombre del evento, canal o liga.
+    /set_alias <tu equipo> <tu alias en una sola palabra>
+        Agrega un alias para tu equipo favorito, para que puedas buscarlo más fácilmente.
+    /version
+        Entrega la versión del bot.
     
-    Si eres ñoño como yo, te encatará saber cuales son las tecnologías usadas:
+    Si eres ñoño como yo, te encantará saber cuales son las tecnologías usadas:
     - Python
     - FastAPI
     - GraphQL
@@ -46,5 +50,15 @@ ALL_WITH_NO_COINCIDENCES = """
 # /version
 
 VERSION = """
-    0.0.2
+    0.3.0
+"""
+
+# /set_alias
+
+ALIAS_ADDED_SUCCESSFULLY = """
+    Alias agregado correctamente!
+"""
+
+ALIAS_WITHOUT_ARGS = """
+    Debes enviar /set_alias <tu equipo> <tu alias en una sola palabra>
 """
