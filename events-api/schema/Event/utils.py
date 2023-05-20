@@ -4,6 +4,8 @@ from pathlib import Path
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
+
+from constants import LOW_THRESHOLD
 from settings import URL
 from thefuzz import fuzz
 
@@ -81,11 +83,12 @@ def get_events_df_per_date(df, date):
     return df_filtered
 
 
-def filter_events_using_substring(df, txt):
+def filter_events_using_substring(df, txt, threshold=LOW_THRESHOLD):
     """
     Filter the rows of a Pandas Dataframe where some attributes contain the substring given
     :param df: The Pandas Dataframe to filter
     :param txt: The substring to search
+    :param threshold: The minimum score allowed to match an approximate search
     :return: A Pandas Dataframe where each rows contain the substring given or approximate.
     """
     df_cpy = df.copy()
@@ -93,7 +96,7 @@ def filter_events_using_substring(df, txt):
     df_with_teams["Score"] = df_with_teams.apply(
         lambda entry: calculate_score(entry, txt), axis=1
     )
-    df_approximate = get_approximate_matches(df_with_teams)
+    df_approximate = get_approximate_matches(df_with_teams, threshold=threshold)
     df_substring = get_matches_are_substring(df_with_teams, txt)
     matches = pd.concat([df_substring, df_approximate])
     events = matches.drop_duplicates()
@@ -139,7 +142,7 @@ def get_matches_are_substring(df, txt):
     ]
 
 
-def get_approximate_matches(df, threshold=85):
+def get_approximate_matches(df, threshold):
     """
     Filter the rows of a Pandas Dataframe with a threshold for a specific column
     :param df: The Pandas Dataframe to filter
