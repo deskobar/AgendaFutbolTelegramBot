@@ -2,11 +2,14 @@ FROM python:3.10.9
 
 WORKDIR /app
 
-COPY requirements.txt /app
+RUN pip install --upgrade pip && pip install "poetry==1.4.2"
 
-RUN pip install --upgrade pip && pip install -r requirements.txt
+COPY poetry.lock .
+COPY pyproject.toml .
 
-COPY . /app
+RUN poetry install
 
-CMD ["python", "bot.py"]
+COPY . .
+
+CMD ["poetry", "run", "python", "bot.py"]
 
