@@ -4,11 +4,11 @@ from pathlib import Path
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
-
-from constants import LOW_THRESHOLD
-from settings import URL
 from thefuzz import fuzz
 
+from constants import LOW_THRESHOLD
+from models import Alias
+from settings import URL
 from utils import parse_day_to_date, get_current_datetime
 
 
@@ -174,3 +174,11 @@ def calculate_score(row, txt):
     ]
 
     return max(scores)
+
+
+async def may_get_team_name_from_user_and_alias(user_id: str, alias: str) -> str | None:
+    try:
+        alias = await Alias.objects.get(user_id=user_id, alias=alias)
+        return alias.team_name
+    except Exception:  # noqa
+        return None
