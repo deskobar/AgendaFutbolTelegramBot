@@ -12,9 +12,9 @@ class Event:
     @staticmethod
     def from_entry(entry):
         return Event(
-            date=entry['FECHA'],
-            match=entry['PARTIDO'],
-            tournament=entry['COMPETENCIA'],
-            hour=entry['HORARIO'],
-            channel=entry['CANAL']
+            date=entry["FECHA"],
+            match=entry["PARTIDO"],
+            tournament=entry["COMPETENCIA"],
+            hour=entry["HORARIO"],
+            channel=entry["CANAL"],
         )

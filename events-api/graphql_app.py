@@ -9,7 +9,7 @@ from schema import (
     get_events_per_date,
     get_events_match_text,
     get_alias,
-    set_alias
+    set_alias,
 )
 
 
@@ -17,7 +17,9 @@ from schema import (
 class Query:
     events: typing.List[Event] = strawberry.field(resolver=get_events)
     events_per_date: typing.List[Event] = strawberry.field(resolver=get_events_per_date)
-    events_match_text: typing.List[Event] = strawberry.field(resolver=get_events_match_text)
+    events_match_text: typing.List[Event] = strawberry.field(
+        resolver=get_events_match_text
+    )
     get_alias: str = strawberry.field(resolver=get_alias)
 
 

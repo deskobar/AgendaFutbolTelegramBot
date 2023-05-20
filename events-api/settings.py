@@ -1,3 +1,3 @@
 from decouple import config
 
-URL = config('URL')
+URL = config("URL")

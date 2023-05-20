@@ -25,9 +25,9 @@ def get_channels(html_text):
     :param html_text: The HTML as plain text
     :return: A List of string, where each below to a Channel.
     """
-    soup = BeautifulSoup(html_text, 'html.parser')
-    channels_elements = soup.findAll('img', class_='di-tv-channel-thumb', alt=True)
-    channels = [channel['alt'] for channel in channels_elements]
+    soup = BeautifulSoup(html_text, "html.parser")
+    channels_elements = soup.findAll("img", class_="di-tv-channel-thumb", alt=True)
+    channels = [channel["alt"] for channel in channels_elements]
     return channels
 
 
@@ -39,10 +39,12 @@ def process_df_using_html(df, html):
     :return: A Pandas DataFrame
     """
     df_cpy = df.copy()
-    df_cpy = df_cpy.drop(['PARTIDO.1', 'PARTIDO.2', 'PARTIDO.3'], axis=1)
+    df_cpy = df_cpy.drop(["PARTIDO.1", "PARTIDO.2", "PARTIDO.3"], axis=1)
     channels = get_channels(html)
-    df_cpy['FECHA'] = df_cpy['FECHA'].map(lambda fecha: parse_day_to_date(int(fecha[-2:])))
-    df_cpy['CANAL'] = channels
+    df_cpy["FECHA"] = df_cpy["FECHA"].map(
+        lambda fecha: parse_day_to_date(int(fecha[-2:]))
+    )
+    df_cpy["CANAL"] = channels
     return df_cpy
 
 
@@ -52,9 +54,9 @@ def get_events_df():
     :return: A Pandas Dataframe.
     """
     current_date = get_current_datetime().date()
-    df_base_path = Path('media')
+    df_base_path = Path("media")
     df_base_path.mkdir(exist_ok=True)
-    df_path = df_base_path / f'{current_date}.pkl'
+    df_path = df_base_path / f"{current_date}.pkl"
 
     if not exists(df_path):
         html = get_html_text()
@@ -75,7 +77,7 @@ def get_events_df_per_date(df, date):
     :param date: A Datetime.Date to filter
     :return: A Pandas Dataframe filtered by the date
     """
-    df_filtered = df[df['FECHA'] == date]
+    df_filtered = df[df["FECHA"] == date]
     return df_filtered
 
 
@@ -88,7 +90,9 @@ def filter_events_using_substring(df, txt):
     """
     df_cpy = df.copy()
     df_with_teams = add_teams(df_cpy)
-    df_with_teams['Score'] = df_with_teams.apply(lambda entry: calculate_score(entry, txt), axis=1)
+    df_with_teams["Score"] = df_with_teams.apply(
+        lambda entry: calculate_score(entry, txt), axis=1
+    )
     df_approximate = get_approximate_matches(df_with_teams)
     df_substring = get_matches_are_substring(df_with_teams, txt)
     matches = pd.concat([df_substring, df_approximate])
@@ -103,8 +107,8 @@ def add_teams(df):
     :return: A pandas.DataFrame
     """
     df_cpy = df.copy()
-    df_cpy['team_1'] = df_cpy.apply(lambda r: split_by_team(r)[0], axis=1)
-    df_cpy['team_2'] = df_cpy.apply(lambda r: split_by_team(r)[1], axis=1)
+    df_cpy["team_1"] = df_cpy.apply(lambda r: split_by_team(r)[0], axis=1)
+    df_cpy["team_2"] = df_cpy.apply(lambda r: split_by_team(r)[1], axis=1)
     return df_cpy
 
 
@@ -114,8 +118,8 @@ def split_by_team(r):
     :param r: The Pandas Dataframe row
     :return: A list
     """
-    event = r['PARTIDO']
-    split = list(map(lambda team: team.strip(), event.split('v/s')))
+    event = r["PARTIDO"]
+    split = list(map(lambda team: team.strip(), event.split("v/s")))
     split = split if len(split) == 2 else [event, event]
     return split
 
@@ -128,9 +132,11 @@ def get_matches_are_substring(df, txt):
     :return: A Pandas Dataframe where each rows contain the substring given.
     """
     df_cpy = df.copy()
-    return df_cpy[df_cpy['PARTIDO'].str.contains(txt, case=False) |
-                  df_cpy['COMPETENCIA'].str.contains(txt, case=False) |
-                  df_cpy['CANAL'].str.contains(txt, case=False)]
+    return df_cpy[
+        df_cpy["PARTIDO"].str.contains(txt, case=False)
+        | df_cpy["COMPETENCIA"].str.contains(txt, case=False)
+        | df_cpy["CANAL"].str.contains(txt, case=False)
+    ]
 
 
 def get_approximate_matches(df, threshold=85):
@@ -141,7 +147,7 @@ def get_approximate_matches(df, threshold=85):
     :return: A Pandas Dataframe filtered.
     """
     df_cpy = df.copy()
-    return df_cpy[df_cpy['Score'] >= threshold]
+    return df_cpy[df_cpy["Score"] >= threshold]
 
 
 def calculate_score(row, txt):
@@ -151,14 +157,16 @@ def calculate_score(row, txt):
     :param txt: The substring to search
     :return: An int that represents the match score between the row and the given text.
     """
-    fields_and_weight = [{'field': 'PARTIDO', 'weight': 1},
-                         {'field': 'COMPETENCIA', 'weight': 1},
-                         {'field': 'CANAL', 'weight': 1},
-                         {'field': 'team_1', 'weight': 1},
-                         {'field': 'team_2', 'weight': 1}]
+    fields_and_weight = [
+        {"field": "PARTIDO", "weight": 1},
+        {"field": "COMPETENCIA", "weight": 1},
+        {"field": "CANAL", "weight": 1},
+        {"field": "team_1", "weight": 1},
+        {"field": "team_2", "weight": 1},
+    ]
 
     scores = [
-        fuzz.partial_ratio(txt.lower(), row[entry['field']].lower()) * entry['weight']
+        fuzz.partial_ratio(txt.lower(), row[entry["field"]].lower()) * entry["weight"]
         for entry in fields_and_weight
     ]
 
